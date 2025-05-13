@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin - Upload Notice</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 0;
+      color: #fff;
+    }
+
+    .container {
+      width: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0;
+      padding: 40px 5%;
+      box-shadow: none;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(to right, #f7971e, #ffd200);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: #ccc;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      color: #fff;
+      width: 100%;
+      max-width: 400px;
+      transition: border-color 0.3s ease;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover {
+      border-color: #ffd200;
+    }
+
+    button {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #ff4b2b, #ff416c);
+    }
+
+    .notice-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+
+    .notice-list li {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(6px);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .notice-list img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      border: 2px solid #ffd200;
+    }
+
+    .notice-list p {
+      margin-bottom: 10px;
+      font-size: 1rem;
+      color: #eee;
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      background-color: #c0392b;
+    }
+
+    /* Logout button top-right */
+    .logout-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #06beb6, #48b1bf);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 999;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #48b1bf, #06beb6);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .container {
+        padding: 30px 20px;
+      }
+
+      .logout-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logout Button (Top-Right) -->
+  <form action="{{ url_for('logout') }}" method="get">
+    <button type="submit" class="logout-btn">Logout</button>
+  </form>
+
+  <div class="container">
+    <h1>Admin Panel</h1>
+    <h2>Upload a Notice Image</h2>
+
+    <form action="{{ url_for('admin') }}" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" required />
+      <button type="submit">Upload</button>
+    </form>
+
+    <h3>Uploaded Notices</h3>
+    <ul class="notice-list">
+      {% for notice in notices %}
+        <li>
+          <img src="{{ url_for('static', filename='uploads/' + notice.image) }}" alt="Notice Image" />
+          <p>{{ notice.text }}</p>
+          <form action="{{ url_for('delete_notice', notice_id=notice.id) }}" method="post">
+            <button type="submit" class="delete-btn" onclick="return confirm('Delete this notice?')">Delete</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</body>
+</html>
